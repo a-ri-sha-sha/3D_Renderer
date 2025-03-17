@@ -3,5 +3,7 @@ project(3d-renderer)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+add_executable(main.cpp)
+
 add_subdirectory(eigen)
 add_subdirectory(Renderer)

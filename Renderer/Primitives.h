@@ -1,23 +1,23 @@
 #pragma once
 
-#include "Eigen/Dense"
+#include "Linalg.h"
+
+#include <vector>
 
 namespace renderer {
 struct Ray {
-    double x;
-    double y;
-    double z;
+    Vector3d ray;
 };
 
 struct Point {
-    double x;
-    double y;
-    double z;
-    Ray direction;
+    Vector3d coordinates;
 };
 
 struct Triangle {
-    Eigen::Vector3<Point> points;
+    Matrix3d points;
 };
 
+struct Object {
+    std::vector<Triangle> trisngles;
+};
 } // namespace renderer
