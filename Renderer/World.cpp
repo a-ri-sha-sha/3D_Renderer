@@ -1,5 +1,5 @@
 #include "World.h"
 
-void renderer::World::moveCamera(/*parametrs*/) {
-    // Not implemented
+void renderer::World::moveCamera(/*parameters*/) {
+   /*implementation*/
 }

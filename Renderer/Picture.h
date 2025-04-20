@@ -1,7 +1,7 @@
 #pragma once 
 
 namespace renderer {
-struct Picture {
+class Picture {
     // ???
 };
 } // namespace renderer

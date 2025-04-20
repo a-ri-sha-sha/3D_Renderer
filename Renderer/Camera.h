@@ -7,9 +7,9 @@ namespace renderer {
 class Camera {
 public:
     Camera() = default;
-    void ChangePosition(const Point& new_position);
+    void changePosition(const Vector3d& new_position);
+    void clipping(const Triangle& triangle, const Vector3d& plane);
 private:
-    Point position_;
     Matrix3d A_;
     Vector3d p_;
 };

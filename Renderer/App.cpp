@@ -8,11 +8,11 @@ void renderer::Application::run() {
     /* псевдокод для понимания
     while (true) {
         input = load_input();
-        world_.moveCamera();
-        Picture pic = renderer_.make(world_);
+        world_.moveCamera(camera_id);
+        Picture pic = renderer_.make(world_, camera_id);
         drawer_.draw(pic);
     }
     */
 
-    // Not implemented
+    /*implementation*/
 }

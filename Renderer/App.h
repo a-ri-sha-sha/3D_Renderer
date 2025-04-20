@@ -13,5 +13,6 @@ private:
     World world_;
     Renderer renderer_;
     Drawer drawer_;
+    size_t camera_id;
 };
 } // namespace renderer

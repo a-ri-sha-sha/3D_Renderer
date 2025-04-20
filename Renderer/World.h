@@ -8,7 +8,7 @@
 namespace renderer {
 class World {
 public:
-    void moveCamera(/*parametrs*/);
+    void moveCamera(/*parameters*/);
 private:
     std::vector<Object> objects_;
     Camera camera_;
