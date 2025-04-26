@@ -1,18 +1,24 @@
-#pragma once 
+#pragma once
 
 #include "World.h"
 #include "Renderer.h"
 #include "Drawer.h"
 
 namespace renderer {
+
 class Application {
 public:
     Application();
     void run();
+
+private:
+    void handleInput();
+
 private:
     World world_;
     Renderer renderer_;
     Drawer drawer_;
     size_t camera_id;
 };
-} // namespace renderer
+
+}  // namespace renderer
