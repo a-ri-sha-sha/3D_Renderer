@@ -4,6 +4,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <memory>
+
 namespace renderer {
 
 class Drawer {
