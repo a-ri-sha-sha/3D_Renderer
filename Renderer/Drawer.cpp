@@ -9,6 +9,7 @@ Drawer::Drawer() {
     for (int i = 0; i < sf::Keyboard::KeyCount; ++i) {
         keys_[i] = false;
     }
+    
 
     for (int i = 0; i < sf::Mouse::ButtonCount; ++i) {
         mouse_buttons_[i] = false;
