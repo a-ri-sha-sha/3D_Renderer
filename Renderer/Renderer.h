@@ -13,5 +13,7 @@ private:
 
     void drawLine(Picture& picture, int x1, int y1, int x2, int y2, sf::Color color);
 
+    bool isPointInTriangle(sf::Vector2i, std::array<sf::Vector2i, 3>);
+
 };
 }  // namespace renderer

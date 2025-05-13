@@ -80,8 +80,8 @@ void Renderer::renderTriangle(Picture& picture, const Camera& camera, const Tria
 
     min_x = std::max(0, min_x);
     min_y = std::max(0, min_y);
-    max_x = std::min(static_cast<int>(picture.getWidth()) - 1, max_x);
-    max_y = std::min(static_cast<int>(picture.getHeight()) - 1, max_y);
+    max_x = std::min(picture.getWidth() - 1, max_x);
+    max_y = std::min(picture.getHeight() - 1, max_y);
 
     for (int y = min_y; y <= max_y; ++y) {
         for (int x = min_x; x <= max_x; ++x) {
@@ -92,8 +92,8 @@ void Renderer::renderTriangle(Picture& picture, const Camera& camera, const Tria
                            barycentric.y() * transformed_points.row(1).z() +
                            barycentric.z() * transformed_points.row(2).z();
 
-                int intensity = static_cast<int>(
-                    std::max(0.0, std::min(255.0, 255.0 * (1.0 - std::abs(z) / 10.0))));
+                int intensity =
+                    std::max(0.0, std::min(255.0, 255.0 * (1.0 - std::abs(z) / 10.0)));
                 sf::Color color(intensity, intensity, intensity);
 
                 picture.setPixel(x, y, color);
@@ -138,4 +138,8 @@ Vector3d Renderer::calculateBarycentric(const sf::Vector2i& p,
     return result;
 }
 
+bool Renderer::isPointInTriangle(sf::Vector2i, std::array<sf::Vector2i, 3>) {
+    return true;
+}
+    
 }  // namespace renderer

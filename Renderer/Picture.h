@@ -8,25 +8,25 @@ namespace renderer {
 
 class Picture {
 public:
-    Picture(unsigned int width = 800, unsigned int height = 600);
+    Picture(int width = 800, int height = 600);
 
-    void setPixel(unsigned int x, unsigned int y, sf::Color color);
-    sf::Color getPixel(unsigned int x, unsigned int y) const;
+    void setPixel(int x, int y, sf::Color color);
+    sf::Color getPixel(int x, int y) const;
 
     void clear(sf::Color color = sf::Color::Black);
 
-    unsigned int getWidth() const {
+    int getWidth() const {
         return width_;
     }
-    unsigned int getHeight() const {
+    int getHeight() const {
         return height_;
     }
 
     const sf::Texture& getTexture() const;
 
 private:
-    unsigned int width_;
-    unsigned int height_;
+    int width_;
+    int height_;
     sf::Image image_;
     sf::Texture texture_;
     bool texture_needs_update_ = true;
