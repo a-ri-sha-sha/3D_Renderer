@@ -23,4 +23,15 @@ void Picture::clear(sf::Color color) {
     image_.create(width_, height_, color);
 }
 
+int Picture::getWidth() const {
+    return width_;
+}
+int Picture::getHeight() const {
+    return height_;
+}
+
+const sf::Image& Picture::getImage() const {
+    return image_;
+}
+
 }  // namespace renderer

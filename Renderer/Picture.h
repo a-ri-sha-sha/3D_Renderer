@@ -15,16 +15,10 @@ public:
 
     void clear(sf::Color color = sf::Color::Black);
 
-    int getWidth() const {
-        return width_;
-    }
-    int getHeight() const {
-        return height_;
-    }
+    int getWidth() const;
+    int getHeight() const;
 
-    const sf::Image& getImage() const {
-        return image_;
-    }
+    const sf::Image& getImage() const;
 
 private:
     int width_;

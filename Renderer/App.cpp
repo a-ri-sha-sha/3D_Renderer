@@ -1,6 +1,7 @@
 #include "App.h"
-#include <iostream>
 #include "Picture.h"
+
+#include <iostream>
 
 namespace renderer {
 
@@ -11,11 +12,11 @@ Application::Application() {
 
 void Application::run() {
     std::cout << "Entering main loop..." << std::endl;
-    
+
     while (drawer_.isOpen()) {
         drawer_.processEvents();
         handleInput();
-        
+
         std::cout << "Rendering frame..." << std::endl;
         Picture pic = renderer_.make(world_, camera_id);
         // Picture pic = renderer_.makeTestTriangle();
@@ -66,8 +67,7 @@ void Application::handleInput() {
         }
 
         last_mouse_pos = current_mouse_pos;
-    }
-    else if (selection_mode_ == SelectionMode::Object && world_.getObjects().size() > 0) {
+    } else if (selection_mode_ == SelectionMode::Object && world_.getObjects().size() > 0) {
         /*
         if (drawer_.isKeyPressed(sf::Keyboard::W)) {
             Vector3d pos = world_.getObjectPosition(selected_object_id_);
@@ -75,7 +75,7 @@ void Application::handleInput() {
         }
         */
     }
-    
+
     if (drawer_.isKeyPressed(sf::Keyboard::Num1)) {
         static bool key1_processed = false;
         if (!key1_processed) {
@@ -85,7 +85,7 @@ void Application::handleInput() {
     } else {
         key1_processed = false;
     }
-    
+
     if (drawer_.isKeyPressed(sf::Keyboard::Num2)) {
         static bool key2_processed = false;
         if (!key2_processed) {
@@ -95,7 +95,7 @@ void Application::handleInput() {
     } else {
         key2_processed = false;
     }
-    
+
     if (drawer_.isKeyPressed(sf::Keyboard::Tab)) {
         static bool tab_processed = false;
         if (!tab_processed) {
@@ -111,43 +111,40 @@ void Application::handleInput() {
     } else {
         tab_processed = false;
     }
-
 }
 
 void Application::initializeBasicScene() {
     world_.clear();
-    
+
     camera_id = world_.addCamera(Vector3d(0, 0, 0), Vector3d(0, 0, -1));
-    
+
     Object triangle;
     Matrix3d points;
-    points << -1.0, 0.0, -3.0,
-              1.0, 0.0, -3.0,
-              0.0, 1.0, -3.0;
+    points << -1.0, 0.0, -3.0, 1.0, 0.0, -3.0, 0.0, 1.0, -3.0;
     triangle.addTriangle(points);
-    
+
     world_.addObject(triangle);
-    
+
     selection_mode_ = SelectionMode::Camera;
 }
 
 void Application::initializeSphereScene() {
     world_.clear();
-    
+
     camera_id = world_.addCamera(Vector3d(0, 0, 5), Vector3d(0, 0, 0));
-    
+
     Object sphere1 = createSphere(1.0, 2);
     world_.addObject(sphere1, Vector3d(0, 0, 0));
-    
+
     Object sphere2 = createSphere(0.5, 1);
     world_.addObject(sphere2, Vector3d(1.5, 0.5, 0));
-    
+
     selection_mode_ = SelectionMode::Camera;
 }
 
 bool Application::loadObjFile(const std::string& filename) {
     initializeBasicScene();
-    
+
     return true;
 }
 

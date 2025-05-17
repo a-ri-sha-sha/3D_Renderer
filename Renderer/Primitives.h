@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Linalg.h"
+
 #include <vector>
 
 namespace renderer {
@@ -9,24 +10,18 @@ struct Triangle {
     Matrix3d points;
 
     Triangle() = default;
-    Triangle(const Matrix3d& p) : points(p) {}
-    
-    Vector3d getPointFromBarycentric(const Vector3d& barycentric) const {
-        return Vector3d(
-            points.row(0) * barycentric.x() +
-            points.row(1) * barycentric.y() +
-            points.row(2) * barycentric.z()
-        );
-    }
+    Triangle(const Matrix3d& p);
+
+    Vector3d getPointFromBarycentric(const Vector3d& barycentric) const;
 };
 
 struct Object {
     std::vector<Triangle> triangles;
-    
+
     void addTriangle(const Matrix3d& points) {
         triangles.emplace_back(points);
     }
-    
+
     void addTriangle(const Triangle& triangle) {
         triangles.push_back(triangle);
     }

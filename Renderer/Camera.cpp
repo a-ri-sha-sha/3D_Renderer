@@ -1,4 +1,5 @@
 #include "Camera.h"
+
 #include <cmath>
 #include <cassert>
 
@@ -10,7 +11,7 @@ Camera::Camera(int width, int height, const Vector3d& position, const Vector3d& 
     yaw_ = std::atan2(direction_.y(), direction_.x()) * 180.0 / M_PI;
     pitch_ = std::asin(direction_.z()) * 180.0 / M_PI;
     updateVectors();
-    
+
     initConstants(width, height);
     initPerspective();
     initPlanes();
@@ -32,6 +33,22 @@ void Camera::rotate(double yaw, double pitch) {
     }
 
     updateVectors();
+}
+
+const Vector3d& Camera::getPosition() const {
+    return position_;
+}
+
+const Vector3d& Camera::getDirection() const {
+    return direction_;
+}
+
+const Vector3d& Camera::getUp() const {
+    return up_;
+}
+
+const Vector3d& Camera::getRight() const {
+    return right_;
 }
 
 void Camera::updateVectors() {
@@ -58,10 +75,10 @@ Matrix3d Camera::getViewMatrix() const {
 
 Matrix4d Camera::getFullViewMatrix() const {
     Matrix4d view = Matrix4d::Identity();
-    
-    view.block<3,3>(0,0) = getViewMatrix();
-    view.block<3,1>(0,3) = -getViewMatrix() * position_;
-    
+
+    view.block<3, 3>(0, 0) = getViewMatrix();
+    view.block<3, 1>(0, 3) = -getViewMatrix() * position_;
+
     return view;
 }
 
@@ -83,9 +100,6 @@ Matrix3d Camera::getProjectionMatrix(double fov, double aspect, double near, dou
 
 Matrix4d Camera::getFullProjectionMatrix() const {
     return perspective_matrix_;
-}
-
-void Camera::clipping(const Triangle& triangle, const Vector3d& plane) {
 }
 
 void Camera::initConstants(int width, int height) {
@@ -116,16 +130,14 @@ void Camera::initPlanes() {
     double focal_length = near_plane_distance_;
     double x_norm_coef = std::sqrt(focal_length * focal_length + 1);
     double y_norm_coef = std::sqrt(focal_length * focal_length + t_ * t_);
-    
+
     planes_ = Matrix54d::Zero();
-    planes_ << 0, 0, -1.0, near_plane_distance_,
-               focal_length / x_norm_coef, 0, -1.0 / x_norm_coef, 0,
-               -focal_length / x_norm_coef, 0, -1.0 / x_norm_coef, 0,
-               0, focal_length / y_norm_coef, -t_ / y_norm_coef, 0,
-               0, -focal_length / y_norm_coef, -t_ / y_norm_coef, 0;
+    planes_ << 0, 0, -1.0, near_plane_distance_, focal_length / x_norm_coef, 0, -1.0 / x_norm_coef,
+        0, -focal_length / x_norm_coef, 0, -1.0 / x_norm_coef, 0, 0, focal_length / y_norm_coef,
+        -t_ / y_norm_coef, 0, 0, -focal_length / y_norm_coef, -t_ / y_norm_coef, 0;
 }
 
-Camera::Matrix34d Camera::applyPerspectiveTransformation(const Camera::Matrix34d& vertices) const {
+Matrix34d Camera::applyPerspectiveTransformation(const Matrix34d& vertices) const {
     Matrix34d ans = vertices;
     ans = (perspective_matrix_ * ans.transpose()).transpose();
     for (int i = 0; i < ans.rows(); ++i) {
@@ -136,13 +148,13 @@ Camera::Matrix34d Camera::applyPerspectiveTransformation(const Camera::Matrix34d
     return ans;
 }
 
-Camera::Vector4d Camera::applyInversePerspectiveTransformation(const Camera::Vector4d& vec) const {
+Vector4d Camera::applyInversePerspectiveTransformation(const Vector4d& vec) const {
     Vector4d ans = vec;
     ans.topLeftCorner<3, 1>() *= ans.w();
     return inverse_prespective_matrix_ * ans;
 }
 
-const Camera::Matrix54d& Camera::getClippingPlanes() const {
+const Matrix54d& Camera::getClippingPlanes() const {
     return planes_;
 }
 

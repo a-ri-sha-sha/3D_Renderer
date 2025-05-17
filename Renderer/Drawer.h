@@ -3,7 +3,6 @@
 #include "Picture.h"
 
 #include <SFML/Graphics.hpp>
-
 #include <memory>
 
 namespace renderer {
