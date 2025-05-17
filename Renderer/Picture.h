@@ -22,14 +22,14 @@ public:
         return height_;
     }
 
-    const sf::Texture& getTexture() const;
+    const sf::Image& getImage() const {
+        return image_;
+    }
 
 private:
     int width_;
     int height_;
     sf::Image image_;
-    sf::Texture texture_;
-    bool texture_needs_update_ = true;
 };
 
 }  // namespace renderer

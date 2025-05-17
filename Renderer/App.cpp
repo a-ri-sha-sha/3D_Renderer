@@ -1,18 +1,27 @@
 #include "App.h"
+#include <iostream>
+#include "Picture.h"
 
 namespace renderer {
 
 Application::Application() {
-    // Not implemented
-    // читаем obj файл, создаем все объекты
+    camera_id = world_.addCamera(Vector3d(0, 0, 5), Vector3d(0, 0, 0));
+    initializeBasicScene();
 }
 
 void Application::run() {
+    std::cout << "Entering main loop..." << std::endl;
+    
     while (drawer_.isOpen()) {
         drawer_.processEvents();
         handleInput();
+        
+        std::cout << "Rendering frame..." << std::endl;
         Picture pic = renderer_.make(world_, camera_id);
+        // Picture pic = renderer_.makeTestTriangle();
+        std::cout << "Frame rendered. Drawing to screen..." << std::endl;
         drawer_.draw(pic);
+        std::cout << "Frame drawn." << std::endl;
     }
 }
 
@@ -20,38 +29,126 @@ void Application::handleInput() {
     const double move_speed = 0.1;
     const double rotate_speed = 1.0;
 
-    const Camera& camera = world_.getCamera(camera_id);
+    static bool key1_processed = false;
+    static bool key2_processed = false;
+    static bool tab_processed = false;
 
-    if (drawer_.isKeyPressed(sf::Keyboard::W)) {
-        world_.moveCamera(camera_id, camera.getDirection(), move_speed);
+    if (selection_mode_ == SelectionMode::Camera) {
+        const Camera& camera = world_.getCamera(camera_id);
+
+        if (drawer_.isKeyPressed(sf::Keyboard::W)) {
+            world_.moveCamera(camera_id, camera.getDirection(), move_speed);
+        }
+        if (drawer_.isKeyPressed(sf::Keyboard::S)) {
+            world_.moveCamera(camera_id, -camera.getDirection(), move_speed);
+        }
+        if (drawer_.isKeyPressed(sf::Keyboard::A)) {
+            world_.moveCamera(camera_id, -camera.getRight(), move_speed);
+        }
+        if (drawer_.isKeyPressed(sf::Keyboard::D)) {
+            world_.moveCamera(camera_id, camera.getRight(), move_speed);
+        }
+        if (drawer_.isKeyPressed(sf::Keyboard::Space)) {
+            world_.moveCamera(camera_id, camera.getUp(), move_speed);
+        }
+        if (drawer_.isKeyPressed(sf::Keyboard::LShift)) {
+            world_.moveCamera(camera_id, -camera.getUp(), move_speed);
+        }
+
+        static sf::Vector2i last_mouse_pos = drawer_.getMousePosition();
+        sf::Vector2i current_mouse_pos = drawer_.getMousePosition();
+
+        if (drawer_.isMouseButtonPressed(sf::Mouse::Right)) {
+            int dx = current_mouse_pos.x - last_mouse_pos.x;
+            int dy = current_mouse_pos.y - last_mouse_pos.y;
+
+            world_.rotateCamera(camera_id, dx * rotate_speed, -dy * rotate_speed);
+        }
+
+        last_mouse_pos = current_mouse_pos;
     }
-    if (drawer_.isKeyPressed(sf::Keyboard::S)) {
-        world_.moveCamera(camera_id, -camera.getDirection(), move_speed);
+    else if (selection_mode_ == SelectionMode::Object && world_.getObjects().size() > 0) {
+        /*
+        if (drawer_.isKeyPressed(sf::Keyboard::W)) {
+            Vector3d pos = world_.getObjectPosition(selected_object_id_);
+            world_.setObjectPosition(selected_object_id_, pos + Vector3d(0, 0, -move_speed));
+        }
+        */
     }
-    if (drawer_.isKeyPressed(sf::Keyboard::A)) {
-        world_.moveCamera(camera_id, -camera.getRight(), move_speed);
+    
+    if (drawer_.isKeyPressed(sf::Keyboard::Num1)) {
+        static bool key1_processed = false;
+        if (!key1_processed) {
+            initializeBasicScene();
+            key1_processed = true;
+        }
+    } else {
+        key1_processed = false;
     }
-    if (drawer_.isKeyPressed(sf::Keyboard::D)) {
-        world_.moveCamera(camera_id, camera.getRight(), move_speed);
+    
+    if (drawer_.isKeyPressed(sf::Keyboard::Num2)) {
+        static bool key2_processed = false;
+        if (!key2_processed) {
+            initializeSphereScene();
+            key2_processed = true;
+        }
+    } else {
+        key2_processed = false;
     }
-    if (drawer_.isKeyPressed(sf::Keyboard::Space)) {
-        world_.moveCamera(camera_id, camera.getUp(), move_speed);
-    }
-    if (drawer_.isKeyPressed(sf::Keyboard::LShift)) {
-        world_.moveCamera(camera_id, -camera.getUp(), move_speed);
+    
+    if (drawer_.isKeyPressed(sf::Keyboard::Tab)) {
+        static bool tab_processed = false;
+        if (!tab_processed) {
+            if (selection_mode_ == SelectionMode::Camera) {
+                if (world_.getObjects().size() > 0) {
+                    selection_mode_ = SelectionMode::Object;
+                }
+            } else {
+                selection_mode_ = SelectionMode::Camera;
+            }
+            tab_processed = true;
+        }
+    } else {
+        tab_processed = false;
     }
 
-    static sf::Vector2i last_mouse_pos = drawer_.getMousePosition();
-    sf::Vector2i current_mouse_pos = drawer_.getMousePosition();
+}
 
-    if (drawer_.isMouseButtonPressed(sf::Mouse::Right)) {
-        int dx = current_mouse_pos.x - last_mouse_pos.x;
-        int dy = current_mouse_pos.y - last_mouse_pos.y;
+void Application::initializeBasicScene() {
+    world_.clear();
+    
+    camera_id = world_.addCamera(Vector3d(0, 0, 0), Vector3d(0, 0, -1));
+    
+    Object triangle;
+    Matrix3d points;
+    points << -1.0, 0.0, -3.0,
+              1.0, 0.0, -3.0,
+              0.0, 1.0, -3.0;
+    triangle.addTriangle(points);
+    
+    world_.addObject(triangle);
+    
+    selection_mode_ = SelectionMode::Camera;
+}
 
-        world_.rotateCamera(camera_id, dx * rotate_speed, -dy * rotate_speed);
-    }
+void Application::initializeSphereScene() {
+    world_.clear();
+    
+    camera_id = world_.addCamera(Vector3d(0, 0, 5), Vector3d(0, 0, 0));
+    
+    Object sphere1 = createSphere(1.0, 2);
+    world_.addObject(sphere1, Vector3d(0, 0, 0));
+    
+    Object sphere2 = createSphere(0.5, 1);
+    world_.addObject(sphere2, Vector3d(1.5, 0.5, 0));
+    
+    selection_mode_ = SelectionMode::Camera;
+}
 
-    last_mouse_pos = current_mouse_pos;
+bool Application::loadObjFile(const std::string& filename) {
+    initializeBasicScene();
+    
+    return true;
 }
 
 }  // namespace renderer

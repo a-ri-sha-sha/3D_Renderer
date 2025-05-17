@@ -10,14 +10,15 @@ FetchContent_MakeAvailable(SFML)
 
 add_executable(${PROJECT_NAME} 
     App.cpp
-    Primitives.cpp
     Camera.cpp
-    Renderer.cpp
-    World.cpp
     Drawer.cpp
-    Picture.cpp
-    main.cpp
     Except.cpp
+    main.cpp
+    Picture.cpp
+    Primitives.cpp
+    Renderer.cpp
+    Screen.cpp
+    World.cpp
 )
 target_link_libraries(${PROJECT_NAME} 
     Eigen3::Eigen

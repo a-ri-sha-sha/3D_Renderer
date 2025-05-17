@@ -1,4 +1,5 @@
 #include "Drawer.h"
+#include <iostream>
 
 namespace renderer {
 
@@ -10,12 +11,13 @@ Drawer::Drawer() {
         keys_[i] = false;
     }
     
-
     for (int i = 0; i < sf::Mouse::ButtonCount; ++i) {
         mouse_buttons_[i] = false;
     }
 
     mouse_position_ = sf::Vector2i(0, 0);
+    
+    texture_.create(800, 600);
 }
 
 Drawer::~Drawer() {
@@ -24,14 +26,67 @@ Drawer::~Drawer() {
     }
 }
 
+// void Drawer::draw(const Picture& picture) {
+//     if (!window_->isOpen()) {
+//         std::cerr << "Window is not open!" << std::endl;
+//         return;
+//     }
+
+//     std::cout << "Clearing window..." << std::endl;
+//     window_->clear(sf::Color::Blue); // Синий фон для лучшей видимости
+    
+//     sf::Texture texture;
+//     if (!texture.loadFromImage(picture.getImage())) {
+//         std::cerr << "Failed to load texture from image!" << std::endl;
+//     }
+    
+//     sprite_.setTexture(texture, true);
+    
+//     std::cout << "Drawing sprite..." << std::endl;
+//     window_->draw(sprite_);
+    
+//     std::cout << "Displaying window..." << std::endl;
+//     window_->display();
+// }
+
 void Drawer::draw(const Picture& picture) {
     if (!window_->isOpen()) {
+        std::cerr << "Window is not open!" << std::endl;
         return;
     }
 
-    window_->clear(sf::Color::Black);
-    sprite_.setTexture(picture.getTexture(), true);
+    std::cout << "Clearing window with blue color..." << std::endl;
+    window_->clear(sf::Color::Blue);
+    
+    std::cout << "Getting image from picture..." << std::endl;
+    const sf::Image& image = picture.getImage();
+    
+    std::cout << "Image size: " << image.getSize().x << "x" << image.getSize().y << std::endl;
+    
+    bool has_red_pixels = false;
+    for (unsigned int y = 0; y < image.getSize().y; ++y) {
+        for (unsigned int x = 0; x < image.getSize().x; ++x) {
+            sf::Color pixel = image.getPixel(x, y);
+            if (pixel.r > 0 && pixel.g == 0 && pixel.b == 0) {
+                has_red_pixels = true;
+                break;
+            }
+        }
+        if (has_red_pixels) break;
+    }
+    std::cout << "Image has red pixels: " << (has_red_pixels ? "YES" : "NO") << std::endl;
+    
+    sf::Texture texture;
+    if (!texture.loadFromImage(image)) {
+        std::cerr << "Failed to load texture from image!" << std::endl;
+    }
+    
+    sprite_.setTexture(texture, true);
+    
+    std::cout << "Drawing sprite..." << std::endl;
     window_->draw(sprite_);
+    
+    std::cout << "Displaying window..." << std::endl;
     window_->display();
 }
 

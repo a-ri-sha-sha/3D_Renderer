@@ -24,6 +24,7 @@ public:
 
 private:
     std::unique_ptr<sf::RenderWindow> window_;
+    sf::Texture texture_;
     sf::Sprite sprite_;
 
     bool keys_[sf::Keyboard::KeyCount];
