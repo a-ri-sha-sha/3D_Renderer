@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}
     Drawer.cpp
     Except.cpp
     main.cpp
+    ObjLoader.cpp
     Picture.cpp
     Primitives.cpp
     Renderer.cpp

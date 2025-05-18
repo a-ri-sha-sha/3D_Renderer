@@ -1,8 +1,10 @@
 #pragma once
 
-#include "World.h"
-#include "Renderer.h"
+#include "Camera.h"
 #include "Drawer.h"
+#include "Primitives.h"
+#include "Renderer.h"
+#include "World.h"
 
 namespace renderer {
 
@@ -11,22 +13,23 @@ public:
     Application();
     void run();
 
+private:
+    enum class SelectionMode {
+        Camera,
+        Object
+    };
+
+    void handleInput();
     void initializeBasicScene();
     void initializeSphereScene();
-
+    
     bool loadObjFile(const std::string& filename);
+    void loadObjDirectory(const std::string& directory);
 
-private:
-    void handleInput();
-
-    World world_;
-    Renderer renderer_;
     Drawer drawer_;
-
-    size_t camera_id = 0;
-
-    enum class SelectionMode { Camera, Object };
-
+    Renderer renderer_;
+    World world_;
+    size_t camera_id;
     SelectionMode selection_mode_ = SelectionMode::Camera;
     size_t selected_object_id_ = 0;
 };

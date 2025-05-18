@@ -1,7 +1,10 @@
 #include "App.h"
+#include "ObjLoader.h"
 #include "Picture.h"
 
 #include <iostream>
+#include <filesystem>
+#include <fstream>
 
 namespace renderer {
 
@@ -32,6 +35,8 @@ void Application::handleInput() {
 
     static bool key1_processed = false;
     static bool key2_processed = false;
+    static bool key3_processed = false;
+    static bool key4_processed = false;
     static bool tab_processed = false;
 
     if (selection_mode_ == SelectionMode::Camera) {
@@ -77,7 +82,6 @@ void Application::handleInput() {
     }
 
     if (drawer_.isKeyPressed(sf::Keyboard::Num1)) {
-        static bool key1_processed = false;
         if (!key1_processed) {
             initializeBasicScene();
             key1_processed = true;
@@ -87,7 +91,6 @@ void Application::handleInput() {
     }
 
     if (drawer_.isKeyPressed(sf::Keyboard::Num2)) {
-        static bool key2_processed = false;
         if (!key2_processed) {
             initializeSphereScene();
             key2_processed = true;
@@ -96,8 +99,24 @@ void Application::handleInput() {
         key2_processed = false;
     }
 
+    if (drawer_.isKeyPressed(sf::Keyboard::Num3)) {
+        if (!key3_processed) {
+            loadObjFile("../models/box.obj");
+            key3_processed = true;
+        }
+    } else {
+        key3_processed = false;
+    }
+
+    if (drawer_.isKeyPressed(sf::Keyboard::Num4)) {
+        if (!key4_processed) {
+            loadObjDirectory("../scene");
+            key4_processed = true;
+        }
+    } else {
+        key4_processed = false;
+    }
     if (drawer_.isKeyPressed(sf::Keyboard::Tab)) {
-        static bool tab_processed = false;
         if (!tab_processed) {
             if (selection_mode_ == SelectionMode::Camera) {
                 if (world_.getObjects().size() > 0) {
@@ -143,9 +162,49 @@ void Application::initializeSphereScene() {
 }
 
 bool Application::loadObjFile(const std::string& filename) {
-    initializeBasicScene();
+    std::cout << "Loading OBJ file: " << filename << std::endl;
+    
+    try {
+        world_.clear();
+        
+        camera_id = world_.addCamera(Vector3d(0, 0, 5), Vector3d(0, 0, 0));
+        
+        Object model = ObjLoader::loadFromFile(filename);
+        
+        if (model.triangles.empty()) {
+            std::cerr << "Error: Failed to load model or model has no triangles" << std::endl;
+            return false;
+        }
+        
+        world_.addObject(model, Vector3d(0, 0, 0));
+        
+        std::cout << "OBJ file loaded successfully: " << model.triangles.size() << " triangles" << std::endl;
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "Error loading OBJ file: " << e.what() << std::endl;
+        return false;
+    }
+}
 
-    return true;
+void Application::loadObjDirectory(const std::string& directory) {
+    std::cout << "Loading all OBJ files from directory: " << directory << std::endl;
+    
+    try {
+        Camera current_camera = world_.getCamera(camera_id);
+        Vector3d camera_pos = current_camera.getPosition();
+        Vector3d camera_dir = current_camera.getDirection();
+        
+        world_.clear();
+        
+        Vector3d target = camera_pos + camera_dir;
+        camera_id = world_.addCamera(camera_pos, target);
+        
+        ObjLoader::loadAllFromDirectory(directory, world_);
+        
+        std::cout << "Loaded objects from directory" << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error loading OBJ files from directory: " << e.what() << std::endl;
+    }
 }
 
 }  // namespace renderer
