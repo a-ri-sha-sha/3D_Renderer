@@ -1,4 +1,5 @@
 #include "App.h"
+#include "Linalg.h"
 #include "ObjLoader.h"
 #include "Picture.h"
 
@@ -190,14 +191,10 @@ void Application::loadObjDirectory(const std::string& directory) {
     std::cout << "Loading all OBJ files from directory: " << directory << std::endl;
     
     try {
-        Camera current_camera = world_.getCamera(camera_id);
-        Vector3d camera_pos = current_camera.getPosition();
-        Vector3d camera_dir = current_camera.getDirection();
-        
         world_.clear();
-        
-        Vector3d target = camera_pos + camera_dir;
-        camera_id = world_.addCamera(camera_pos, target);
+
+        camera_id = world_.addCamera(Vector3d(0.0, 2.0, 5.0), Vector3d(0.0, 1.0, 0.0));
+        Camera current_camera = world_.getCamera(camera_id);
         
         ObjLoader::loadAllFromDirectory(directory, world_);
         
